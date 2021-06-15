@@ -22,7 +22,8 @@ class PaymentRequestButton extends StatelessWidget {
       width: 24,
       child: IconButton(
         icon: SvgPicture.asset(
-              'assets/save-money.svg'
+              'assets/save-money.svg',
+              color: Colors.white,
             ),
         onPressed: onPressed,
         padding: EdgeInsets.zero,
