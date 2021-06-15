@@ -21,9 +21,7 @@ class PaymentRequestButton extends StatelessWidget {
       margin: const EdgeInsets.only(right: 16),
       width: 24,
       child: IconButton(
-        icon: InheritedChatTheme.of(context).theme.attachmentButtonIcon != null
-            ? InheritedChatTheme.of(context).theme.attachmentButtonIcon!
-            : SvgPicture.asset(
+        icon: SvgPicture.asset(
               'assets/save-money.svg'
             ),
         onPressed: onPressed,
