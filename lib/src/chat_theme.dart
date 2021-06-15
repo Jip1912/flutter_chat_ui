@@ -35,7 +35,7 @@ const NEUTRAL_7 = Color(0xffffffff);
 const NEUTRAL_7_WITH_OPACITY = Color(0x80ffffff);
 
 /// Primary
-const PRIMARY = Color(0xff6f61e8);
+const PRIMARY = Color(0xFFFFCA28);
 
 /// Secondary
 const SECONDARY = Color(0xfff5f5f7);
