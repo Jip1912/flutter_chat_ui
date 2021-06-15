@@ -24,6 +24,7 @@ class PaymentRequestButton extends StatelessWidget {
         icon: SvgPicture.asset(
               'assets/save-money.svg',
               color: Colors.white,
+              package: 'flutter_chat_ui',
             ),
         onPressed: onPressed,
         padding: EdgeInsets.zero,
