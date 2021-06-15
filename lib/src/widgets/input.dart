@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:flutter_chat_ui/src/widgets/payment_request_button.dart';
 import 'attachment_button.dart';
 import 'inherited_chat_theme.dart';
 import 'inherited_l10n.dart';
@@ -91,6 +92,24 @@ class _InputState extends State<Input> {
     }
   }
 
+  Widget _paymentRequestWidget() {
+    if (widget.isAttachmentUploading == true) {
+      return SizedBox(
+        height: 24,
+        width: 24,
+        child: CircularProgressIndicator(
+          backgroundColor: Colors.transparent,
+          strokeWidth: 2,
+          valueColor: AlwaysStoppedAnimation<Color>(
+            InheritedChatTheme.of(context).theme.inputTextColor,
+          ),
+        ),
+      );
+    } else {
+      return PaymentRequestButton(onPressed: widget.onAttachmentPressed);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final _query = MediaQuery.of(context);
@@ -138,6 +157,7 @@ class _InputState extends State<Input> {
                 child: Row(
                   children: [
                     if (widget.onAttachmentPressed != null) _leftWidget(),
+                    _paymentRequestWidget(),
                     Expanded(
                       child: TextField(
                         controller: _textController,
