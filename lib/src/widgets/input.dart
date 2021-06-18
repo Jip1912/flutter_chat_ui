@@ -109,7 +109,7 @@ class _InputState extends State<Input> {
         ),
       );
     } else {
-      return PaymentRequestButton(onPressed: widget.onAttachmentPressed);
+      return PaymentRequestButton(onPressed: widget.onPaymentRequestPressed);
     }
   }
 
