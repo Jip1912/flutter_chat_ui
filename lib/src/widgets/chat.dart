@@ -29,6 +29,7 @@ class Chat extends StatefulWidget {
     this.l10n = const ChatL10nEn(),
     required this.messages,
     this.onAttachmentPressed,
+    this.onPaymentRequestPressed,
     this.onEndReached,
     this.onEndReachedThreshold,
     this.onMessageLongPress,
@@ -67,6 +68,8 @@ class Chat extends StatefulWidget {
 
   /// See [Input.onAttachmentPressed]
   final void Function()? onAttachmentPressed;
+
+  final void Function()? onPaymentRequestPressed;
 
   /// See [ChatList.onEndReached]
   final Future<void> Function()? onEndReached;
@@ -318,6 +321,7 @@ class _ChatState extends State<Chat> {
                       Input(
                         isAttachmentUploading: widget.isAttachmentUploading,
                         onAttachmentPressed: widget.onAttachmentPressed,
+                        onPaymentRequestPressed: widget.onPaymentRequestPressed,
                         onSendPressed: widget.onSendPressed,
                       ),
                     ],

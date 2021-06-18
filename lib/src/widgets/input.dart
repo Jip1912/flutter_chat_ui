@@ -23,11 +23,14 @@ class Input extends StatefulWidget {
     Key? key,
     this.isAttachmentUploading,
     this.onAttachmentPressed,
+    this.onPaymentRequestPressed,
     required this.onSendPressed,
   }) : super(key: key);
 
   /// See [AttachmentButton.onPressed]
   final void Function()? onAttachmentPressed;
+
+  final void Function()? onPaymentRequestPressed;
 
   /// Whether attachment is uploading. Will replace attachment button with a
   /// [CircularProgressIndicator]. Since we don't have libraries for
