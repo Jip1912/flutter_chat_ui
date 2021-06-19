@@ -41,6 +41,7 @@ class Chat extends StatefulWidget {
     this.theme = const DefaultChatTheme(),
     this.usePreviewData = true,
     required this.user,
+    required this.onPaymentClick
   }) : super(key: key);
 
   /// See [Message.buildCustomMessage]
@@ -107,6 +108,8 @@ class Chat extends StatefulWidget {
 
   /// See [InheritedUser.user]
   final types.User user;
+
+  final ValueChanged<String> onPaymentClick;
 
   @override
   _ChatState createState() => _ChatState();
@@ -223,6 +226,7 @@ class _ChatState extends State<Chat> {
         showStatus: map['showStatus'] == true,
         showUserAvatars: widget.showUserAvatars,
         usePreviewData: widget.usePreviewData,
+        onPaymentClick: widget.onPaymentClick,
       );
     }
   }

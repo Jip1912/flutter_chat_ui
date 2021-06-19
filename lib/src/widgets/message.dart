@@ -28,6 +28,7 @@ class Message extends StatelessWidget {
     required this.showStatus,
     required this.showUserAvatars,
     required this.usePreviewData,
+    required this.onPaymentClick
   }) : super(key: key);
 
   /// Build a custom message inside predefined bubble
@@ -71,6 +72,8 @@ class Message extends StatelessWidget {
 
   /// See [TextMessage.usePreviewData]
   final bool usePreviewData;
+
+  final ValueChanged<String> onPaymentClick;
 
   Widget _buildAvatar(BuildContext context) {
     final color = getUserAvatarNameColor(message.author,
@@ -133,6 +136,7 @@ class Message extends StatelessWidget {
           message: textMessage,
           showName: showName,
           usePreviewData: usePreviewData,
+          onPaymentClick: onPaymentClick,
         );
       default:
         return Container();
