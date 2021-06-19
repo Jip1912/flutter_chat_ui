@@ -131,7 +131,6 @@ class Message extends StatelessWidget {
         final textMessage = message as types.PaymentRequestMessage;
         return PaymentRequestMessage(
           message: textMessage,
-          onPreviewDataFetched: onPreviewDataFetched,
           showName: showName,
           usePreviewData: usePreviewData,
         );

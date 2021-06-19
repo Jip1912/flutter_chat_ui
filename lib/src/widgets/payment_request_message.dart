@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:mollie/mollie.dart';
 //import 'package:flutter_link_previewer/flutter_link_previewer.dart'
 //    show LinkPreview, REGEX_LINK;
 import '../util.dart';
@@ -14,6 +15,7 @@ class PaymentRequestMessage extends StatelessWidget {
     required this.message,
     required this.usePreviewData,
     required this.showName,
+    required this.onPaymentClick
   }) : super(key: key);
 
   /// [types.PaymentRequestMessage]
@@ -24,6 +26,8 @@ class PaymentRequestMessage extends StatelessWidget {
 
   /// Enables link (URL) preview
   final bool usePreviewData;
+
+  final ValueChanged<String> onPaymentClick;
 
   // Widget _linkPreview(
   //   types.User user,
@@ -76,7 +80,7 @@ class PaymentRequestMessage extends StatelessWidget {
     final color = getUserAvatarNameColor(message.author,
         InheritedChatTheme.of(context).theme.userAvatarNameColors);
     final name = getUserName(message.author);
-
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -101,6 +105,17 @@ class PaymentRequestMessage extends StatelessWidget {
                   .theme
                   .receivedMessageBodyTextStyle,
           textWidthBasis: TextWidthBasis.longestLine,
+        ),
+        TextButton(
+          style: TextButton.styleFrom(
+            textStyle: const TextStyle(fontSize: 20),
+          ),
+          onPressed: () {
+            print('Payment url: ${message.paymentUrl}');
+            /// Start the checkout process with the browser switch
+            onPaymentClick(message.paymentUrl);
+          },
+          child: const Text('Betaal'),
         ),
       ],
     );
