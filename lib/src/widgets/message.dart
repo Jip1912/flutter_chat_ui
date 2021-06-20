@@ -75,7 +75,7 @@ class Message extends StatelessWidget {
   /// See [TextMessage.usePreviewData]
   final bool usePreviewData;
 
-  final ValueChanged<Tuple2<String, String>> onPaymentClick;
+  final ValueChanged<types.PaymentRequestMessage> onPaymentClick;
 
   Widget _buildAvatar(BuildContext context) {
     final color = getUserAvatarNameColor(message.author,

@@ -28,7 +28,7 @@ class PaymentRequestMessage extends StatelessWidget {
   /// Enables link (URL) preview
   final bool usePreviewData;
 
-  final ValueChanged<Tuple2<String, String>> onPaymentClick;
+  final ValueChanged<types.PaymentRequestMessage> onPaymentClick;
 
   // Widget _linkPreview(
   //   types.User user,
@@ -131,7 +131,7 @@ class PaymentRequestMessage extends StatelessWidget {
           onPressed: () {
             print('Payment url: ${message.paymentUrl}');
             /// Start the checkout process with the browser switch
-            onPaymentClick(Tuple2<String, String>(message.paymentUrl, message.paymentId));
+            onPaymentClick(message);
           },
           child: const Text('Betaal'),
         ),

@@ -111,8 +111,8 @@ class Chat extends StatefulWidget {
   /// See [InheritedUser.user]
   final types.User user;
 
-  final ValueChanged<Tuple2<String, String>> onPaymentClick;
-  
+  final ValueChanged<types.PaymentRequestMessage> onPaymentClick;
+
   @override
   _ChatState createState() => _ChatState();
 }
