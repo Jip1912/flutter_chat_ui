@@ -98,7 +98,25 @@ class PaymentRequestMessage extends StatelessWidget {
             ),
           ),
         SelectableText(
+          'Betaalverzoekje',
+          style: user.id == message.author.id
+              ? InheritedChatTheme.of(context).theme.sentMessageBodyTextStyle
+              : InheritedChatTheme.of(context)
+                  .theme
+                  .receivedMessageBodyTextStyle,
+          textWidthBasis: TextWidthBasis.longestLine,
+        ),
+        SelectableText(
           message.amount.toString(),
+          style: user.id == message.author.id
+              ? InheritedChatTheme.of(context).theme.sentMessageBodyTextStyle
+              : InheritedChatTheme.of(context)
+                  .theme
+                  .receivedMessageBodyTextStyle,
+          textWidthBasis: TextWidthBasis.longestLine,
+        ),
+        SelectableText(
+          message.status.toString() == 'paid' ? 'Betaald!' : 'Nog niet betaald',
           style: user.id == message.author.id
               ? InheritedChatTheme.of(context).theme.sentMessageBodyTextStyle
               : InheritedChatTheme.of(context)
