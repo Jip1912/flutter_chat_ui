@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/src/widgets/payment_request_message.dart';
 import 'package:mollie/mollie.dart';
-import 'package:tuple/tuple.dart';
 import '../util.dart';
 import 'file_message.dart';
 import 'image_message.dart';

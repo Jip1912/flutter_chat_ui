@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:mollie/mollie.dart';
-import 'package:tuple/tuple.dart';
 //import 'package:flutter_link_previewer/flutter_link_previewer.dart'
 //    show LinkPreview, REGEX_LINK;
 import '../util.dart';
@@ -81,6 +80,7 @@ class PaymentRequestMessage extends StatelessWidget {
     final color = getUserAvatarNameColor(message.author,
         InheritedChatTheme.of(context).theme.userAvatarNameColors);
     final name = getUserName(message.author);
+    var paymentStatus;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
