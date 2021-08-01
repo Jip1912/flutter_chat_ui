@@ -24,7 +24,7 @@ Color getUserAvatarNameColor(types.User user, List<Color> colors) {
 
 /// Returns user name as joined firstName and lastName
 String getUserName(types.User user) =>
-    '${user.firstName ?? ''} ${user.lastName ?? ''}'.trim();
+    user.naam.toString();
 
 /// Returns formatted date used as a divider between different days in the
 /// chat history

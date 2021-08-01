@@ -79,7 +79,7 @@ class Message extends StatelessWidget {
   Widget _buildAvatar(BuildContext context) {
     final color = getUserAvatarNameColor(message.author,
         InheritedChatTheme.of(context).theme.userAvatarNameColors);
-    final hasImage = message.author.imageUrl != null;
+    final hasImage = message.author.fotoUrl != null;
     final name = getUserName(message.author);
 
     return showAvatar
@@ -87,7 +87,7 @@ class Message extends StatelessWidget {
             margin: const EdgeInsets.only(right: 8),
             child: CircleAvatar(
               backgroundImage:
-                  hasImage ? NetworkImage(message.author.imageUrl!) : null,
+                  hasImage ? NetworkImage(message.author.fotoUrl!) : null,
               backgroundColor: color,
               radius: 16,
               child: !hasImage
