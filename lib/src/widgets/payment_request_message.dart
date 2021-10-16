@@ -10,13 +10,13 @@ import 'inherited_user.dart';
 /// A class that represents text message widget with optional link preview
 class PaymentRequestMessage extends StatelessWidget {
   /// Creates a text message widget from a [types.PaymentRequestMessage] class
-  const PaymentRequestMessage({
-    Key? key,
-    required this.message,
-    required this.usePreviewData,
-    required this.showName,
-    required this.onPaymentClick
-  }) : super(key: key);
+  const PaymentRequestMessage(
+      {Key? key,
+      required this.message,
+      required this.usePreviewData,
+      required this.showName,
+      required this.onPaymentClick})
+      : super(key: key);
 
   /// [types.PaymentRequestMessage]
   final types.PaymentRequestMessage message;
@@ -54,26 +54,26 @@ class PaymentRequestMessage extends StatelessWidget {
   //       InheritedChatTheme.of(context).theme.userAvatarNameColors);
   //   final name = getUserName(message.author);
 
-    // return LinkPreview(
-    //   enableAnimation: true,
-    //   header: showName ? name : null,
-    //   headerStyle: InheritedChatTheme.of(context)
-    //       .theme
-    //       .userNameTextStyle
-    //       .copyWith(color: color),
-    //   linkStyle: bodyTextStyle,
-    //   metadataTextStyle: linkDescriptionTextStyle,
-    //   metadataTitleStyle: linkTitleTextStyle,
-    //   onPreviewDataFetched: _onPreviewDataFetched,
-    //   padding: const EdgeInsets.symmetric(
-    //     horizontal: 24,
-    //     vertical: 16,
-    //   ),
-    //   previewData: message.previewData,
-    //   text: message.text,
-    //   textStyle: bodyTextStyle,
-    //   width: width,
-    // );
+  // return LinkPreview(
+  //   enableAnimation: true,
+  //   header: showName ? name : null,
+  //   headerStyle: InheritedChatTheme.of(context)
+  //       .theme
+  //       .userNameTextStyle
+  //       .copyWith(color: color),
+  //   linkStyle: bodyTextStyle,
+  //   metadataTextStyle: linkDescriptionTextStyle,
+  //   metadataTitleStyle: linkTitleTextStyle,
+  //   onPreviewDataFetched: _onPreviewDataFetched,
+  //   padding: const EdgeInsets.symmetric(
+  //     horizontal: 24,
+  //     vertical: 16,
+  //   ),
+  //   previewData: message.previewData,
+  //   text: message.text,
+  //   textStyle: bodyTextStyle,
+  //   width: width,
+  // );
   //}
 
   Widget _textWidget(types.User user, BuildContext context) {
@@ -116,7 +116,9 @@ class PaymentRequestMessage extends StatelessWidget {
           textWidthBasis: TextWidthBasis.longestLine,
         ),
         SelectableText(
-          message.status.toString() == 'paid' ? 'Betaald!' : 'Nog niet betaald',
+          message.status.toString() == 'completed'
+              ? 'Betaald!'
+              : 'Nog niet betaald',
           style: user.id == message.author.id
               ? InheritedChatTheme.of(context).theme.sentMessageBodyTextStyle
               : InheritedChatTheme.of(context)
@@ -130,6 +132,7 @@ class PaymentRequestMessage extends StatelessWidget {
           ),
           onPressed: () {
             print('Payment url: ${message.paymentUrl}');
+
             /// Start the checkout process with the browser switch
             onPaymentClick(message);
           },
