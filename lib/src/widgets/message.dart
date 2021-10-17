@@ -14,23 +14,23 @@ import 'text_message.dart';
 /// a nice look on larger screens.
 class Message extends StatelessWidget {
   /// Creates a particular message from any message type
-  const Message({
-    Key? key,
-    this.buildCustomMessage,
-    this.dateLocale,
-    required this.message,
-    required this.messageWidth,
-    this.onMessageLongPress,
-    this.onMessageTap,
-    this.onPreviewDataFetched,
-    required this.roundBorder,
-    required this.showAvatar,
-    required this.showName,
-    required this.showStatus,
-    required this.showUserAvatars,
-    required this.usePreviewData,
-    required this.onPaymentClick
-  }) : super(key: key);
+  const Message(
+      {Key? key,
+      this.buildCustomMessage,
+      this.dateLocale,
+      required this.message,
+      required this.messageWidth,
+      this.onMessageLongPress,
+      this.onMessageTap,
+      this.onPreviewDataFetched,
+      required this.roundBorder,
+      required this.showAvatar,
+      required this.showName,
+      required this.showStatus,
+      required this.showUserAvatars,
+      required this.usePreviewData,
+      required this.onPaymentClick})
+      : super(key: key);
 
   /// Build a custom message inside predefined bubble
   final Widget Function(types.Message)? buildCustomMessage;
@@ -132,9 +132,9 @@ class Message extends StatelessWidget {
           usePreviewData: usePreviewData,
         );
       case types.MessageType.paymentRequest:
-        final textMessage = message as types.PaymentRequestMessage;
+        final paymentRequestMessage = message as types.PaymentRequestMessage;
         return PaymentRequestMessage(
-          message: textMessage,
+          message: paymentRequestMessage,
           showName: showName,
           usePreviewData: usePreviewData,
           onPaymentClick: onPaymentClick,

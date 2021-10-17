@@ -116,7 +116,7 @@ class PaymentRequestMessage extends StatelessWidget {
           textWidthBasis: TextWidthBasis.longestLine,
         ),
         SelectableText(
-          message.status.toString() == 'completed'
+          message.paymentStatus.toString() == 'completed'
               ? 'Betaald!'
               : 'Nog niet betaald',
           style: user.id == message.author.id
