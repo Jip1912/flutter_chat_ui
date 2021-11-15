@@ -2,14 +2,16 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/src/widgets/inherited_l10n.dart';
-import 'package:mollie/mollie.dart';
+import 'package:intl/intl.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import '../chat_l10n.dart';
 import '../chat_theme.dart';
 import '../conditional/conditional.dart';
 import '../models/date_header.dart';
+import '../models/emoji_enlargement_behavior.dart';
 import '../models/message_spacer.dart';
 import '../models/preview_image.dart';
+import '../models/send_button_visibility_mode.dart';
 import '../util.dart';
 import 'chat_list.dart';
 import 'inherited_chat_theme.dart';
@@ -17,42 +19,121 @@ import 'inherited_user.dart';
 import 'input.dart';
 import 'message.dart';
 
-/// Entry widget, represents the complete chat
+/// Entry widget, represents the complete chat. If you wrap it in [SafeArea] and
+/// it should be full screen, set [SafeArea]'s `bottom` to `false`.
 class Chat extends StatefulWidget {
   /// Creates a chat widget
   const Chat({
     Key? key,
-    this.buildCustomMessage,
+    this.bubbleBuilder,
+    this.customBottomWidget,
+    this.customDateHeaderText,
+    this.customMessageBuilder,
+    this.dateFormat,
+    this.dateHeaderThreshold = 900000,
     this.dateLocale,
     this.disableImageGallery,
+    this.emojiEnlargementBehavior = EmojiEnlargementBehavior.multi,
+    this.emptyState,
+    this.fileMessageBuilder,
+    this.groupMessagesThreshold = 60000,
+    this.hideBackgroundOnEmojiMessages = true,
+    this.imageMessageBuilder,
     this.isAttachmentUploading,
     this.isLastPage,
     this.l10n = const ChatL10nEn(),
     required this.messages,
     this.onAttachmentPressed,
-    this.onPaymentRequestPressed,
+    this.onBackgroundTap,
     this.onEndReached,
     this.onEndReachedThreshold,
     this.onMessageLongPress,
     this.onMessageTap,
     this.onPreviewDataFetched,
     required this.onSendPressed,
+    this.onTextChanged,
+    this.onTextFieldTap,
+    this.scrollPhysics,
+    this.sendButtonVisibilityMode = SendButtonVisibilityMode.editing,
     this.showUserAvatars = false,
     this.showUserNames = false,
+    this.textMessageBuilder,
     this.theme = const DefaultChatTheme(),
+    this.timeFormat,
     this.usePreviewData = true,
+    this.onPaymentRequestPressed,
+    required this.onPaymentClick,
     required this.user,
-    required this.onPaymentClick
   }) : super(key: key);
 
-  /// See [Message.buildCustomMessage]
-  final Widget Function(types.Message)? buildCustomMessage;
+  /// See [Message.bubbleBuilder]
+  final Widget Function(
+    Widget child, {
+    required types.Message message,
+    required bool nextMessageInGroup,
+  })? bubbleBuilder;
 
-  /// See [Message.dateLocale]
+  /// Allows you to replace the default Input widget e.g. if you want to create
+  /// a channel view.
+  final Widget? customBottomWidget;
+
+  /// If [dateFormat], [dateLocale] and/or [timeFormat] is not enough to
+  /// customize date headers in your case, use this to return an arbitrary
+  /// string based on a [DateTime] of a particular message. Can be helpful to
+  /// return "Today" if [DateTime] is today. IMPORTANT: this will replace
+  /// all default date headers, so you must handle all cases yourself, like
+  /// for example today, yesterday and before. Or you can just return the same
+  /// date header for any message.
+  final String Function(DateTime)? customDateHeaderText;
+
+  /// See [Message.customMessageBuilder]
+  final Widget Function(types.CustomMessage, {required int messageWidth})?
+      customMessageBuilder;
+
+  /// Allows you to customize the date format. IMPORTANT: only for the date,
+  /// do not return time here. See [timeFormat] to customize the time format.
+  /// [dateLocale] will be ignored if you use this, so if you want a localized date
+  /// make sure you initialize your [DateFormat] with a locale. See [customDateHeaderText]
+  /// for more customization.
+  final DateFormat? dateFormat;
+
+  /// Time (in ms) between two messages when we will render a date header.
+  /// Default value is 15 minutes, 900000 ms. When time between two messages
+  /// is higher than this threshold, date header will be rendered. Also,
+  /// not related to this value, date header will be rendered on every new day.
+  final int dateHeaderThreshold;
+
+  /// Locale will be passed to the `Intl` package. Make sure you initialized
+  /// date formatting in your app before passing any locale here, otherwise
+  /// an error will be thrown. Also see [customDateHeaderText], [dateFormat], [timeFormat].
   final String? dateLocale;
 
   /// Disable automatic image preview on tap.
   final bool? disableImageGallery;
+
+  /// See [Message.emojiEnlargementBehavior]
+  final EmojiEnlargementBehavior emojiEnlargementBehavior;
+
+  /// Allows you to change what the user sees when there are no messages.
+  /// `emptyChatPlaceholder` and `emptyChatPlaceholderTextStyle` are ignored
+  /// in this case.
+  final Widget? emptyState;
+
+  /// See [Message.fileMessageBuilder]
+  final Widget Function(types.FileMessage, {required int messageWidth})?
+      fileMessageBuilder;
+
+  /// Time (in ms) between two messages when we will visually group them.
+  /// Default value is 1 minute, 60000 ms. When time between two messages
+  /// is lower than this threshold, they will be visually grouped.
+  final int groupMessagesThreshold;
+
+  /// See [Message.hideBackgroundOnEmojiMessages]
+  final bool hideBackgroundOnEmojiMessages;
+
+  /// See [Message.imageMessageBuilder]
+  final Widget Function(types.ImageMessage, {required int messageWidth})?
+      imageMessageBuilder;
 
   /// See [Input.isAttachmentUploading]
   final bool? isAttachmentUploading;
@@ -62,7 +143,7 @@ class Chat extends StatefulWidget {
 
   /// Localized copy. Extend [ChatL10n] class to create your own copy or use
   /// existing one, like the default [ChatL10nEn]. You can customize only
-  /// certain variables, see more here [ChatL10nEn].
+  /// certain properties, see more here [ChatL10nEn].
   final ChatL10n l10n;
 
   /// List of [types.Message] to render in the chat widget
@@ -72,6 +153,9 @@ class Chat extends StatefulWidget {
   final void Function()? onAttachmentPressed;
 
   final void Function()? onPaymentRequestPressed;
+
+  /// Called when user taps on background
+  final void Function()? onBackgroundTap;
 
   /// See [ChatList.onEndReached]
   final Future<void> Function()? onEndReached;
@@ -92,6 +176,18 @@ class Chat extends StatefulWidget {
   /// See [Input.onSendPressed]
   final void Function(types.PartialText) onSendPressed;
 
+  /// See [Input.onTextChanged]
+  final void Function(String)? onTextChanged;
+
+  /// See [Input.onTextFieldTap]
+  final void Function()? onTextFieldTap;
+
+  /// See [ChatList.scrollPhysics]
+  final ScrollPhysics? scrollPhysics;
+
+  /// See [Input.sendButtonVisibilityMode]
+  final SendButtonVisibilityMode sendButtonVisibilityMode;
+
   /// See [Message.showUserAvatars]
   final bool showUserAvatars;
 
@@ -99,10 +195,24 @@ class Chat extends StatefulWidget {
   /// shown only on text messages.
   final bool showUserNames;
 
+  /// See [Message.textMessageBuilder]
+  final Widget Function(
+    types.TextMessage, {
+    required int messageWidth,
+    required bool showName,
+  })? textMessageBuilder;
+
   /// Chat theme. Extend [ChatTheme] class to create your own theme or use
   /// existing one, like the [DefaultChatTheme]. You can customize only certain
-  /// variables, see more here [DefaultChatTheme].
+  /// properties, see more here [DefaultChatTheme].
   final ChatTheme theme;
+
+  /// Allows you to customize the time format. IMPORTANT: only for the time,
+  /// do not return date here. See [dateFormat] to customize the date format.
+  /// [dateLocale] will be ignored if you use this, so if you want a localized time
+  /// make sure you initialize your [DateFormat] with a locale. See [customDateHeaderText]
+  /// for more customization.
+  final DateFormat? timeFormat;
 
   /// See [Message.usePreviewData]
   final bool usePreviewData;
@@ -138,8 +248,13 @@ class _ChatState extends State<Chat> {
       final result = calculateChatMessages(
         widget.messages,
         widget.user,
+        customDateHeaderText: widget.customDateHeaderText,
+        dateFormat: widget.dateFormat,
+        dateHeaderThreshold: widget.dateHeaderThreshold,
         dateLocale: widget.dateLocale,
+        groupMessagesThreshold: widget.groupMessagesThreshold,
         showUserNames: widget.showUserNames,
+        timeFormat: widget.timeFormat,
       );
 
       _chatMessages = result[0] as List<Object>;
@@ -147,7 +262,22 @@ class _ChatState extends State<Chat> {
     }
   }
 
-  Widget _buildImageGallery() {
+  Widget _emptyStateBuilder() {
+    return widget.emptyState ??
+        Container(
+          alignment: Alignment.center,
+          margin: const EdgeInsets.symmetric(
+            horizontal: 24,
+          ),
+          child: Text(
+            widget.l10n.emptyChatPlaceholder,
+            style: widget.theme.emptyChatPlaceholderTextStyle,
+            textAlign: TextAlign.center,
+          ),
+        );
+  }
+
+  Widget _imageGalleryBuilder() {
     return Dismissible(
       key: const Key('photo_view_gallery'),
       direction: DismissDirection.down,
@@ -179,14 +309,28 @@ class _ChatState extends State<Chat> {
     );
   }
 
-  Widget _buildMessage(Object object) {
+  Widget _imageGalleryLoadingBuilder(
+    BuildContext context,
+    ImageChunkEvent? event,
+  ) {
+    return Center(
+      child: SizedBox(
+        width: 20,
+        height: 20,
+        child: CircularProgressIndicator(
+          value: event == null || event.expectedTotalBytes == null
+              ? 0
+              : event.cumulativeBytesLoaded / event.expectedTotalBytes!,
+        ),
+      ),
+    );
+  }
+
+  Widget _messageBuilder(Object object, BoxConstraints constraints) {
     if (object is DateHeader) {
       return Container(
         alignment: Alignment.center,
-        margin: const EdgeInsets.only(
-          bottom: 32,
-          top: 16,
-        ),
+        margin: widget.theme.dateDividerMargin,
         child: Text(
           object.text,
           style: widget.theme.dateDividerTextStyle,
@@ -201,52 +345,38 @@ class _ChatState extends State<Chat> {
       final message = map['message']! as types.Message;
       final _messageWidth =
           widget.showUserAvatars && message.author.id != widget.user.id
-              ? min(MediaQuery.of(context).size.width * 0.72, 440).floor()
-              : min(MediaQuery.of(context).size.width * 0.78, 440).floor();
+              ? min(constraints.maxWidth * 0.72, 440).floor()
+              : min(constraints.maxWidth * 0.78, 440).floor();
 
       return Message(
-        key: ValueKey(message.id),
-        buildCustomMessage: widget.buildCustomMessage,
-        dateLocale: widget.dateLocale,
-        message: message,
-        messageWidth: _messageWidth,
-        onMessageLongPress: widget.onMessageLongPress,
-        onMessageTap: (tappedMessage) {
-          if (tappedMessage is types.ImageMessage &&
-              widget.disableImageGallery != true) {
-            _onImagePressed(tappedMessage);
-          }
+          key: ValueKey(message.id),
+          bubbleBuilder: widget.bubbleBuilder,
+          customMessageBuilder: widget.customMessageBuilder,
+          emojiEnlargementBehavior: widget.emojiEnlargementBehavior,
+          fileMessageBuilder: widget.fileMessageBuilder,
+          hideBackgroundOnEmojiMessages: widget.hideBackgroundOnEmojiMessages,
+          imageMessageBuilder: widget.imageMessageBuilder,
+          message: message,
+          messageWidth: _messageWidth,
+          onMessageLongPress: widget.onMessageLongPress,
+          onMessageTap: (tappedMessage) {
+            if (tappedMessage is types.ImageMessage &&
+                widget.disableImageGallery != true) {
+              _onImagePressed(tappedMessage);
+            }
 
-          widget.onMessageTap?.call(tappedMessage);
-        },
-        onPreviewDataFetched: _onPreviewDataFetched,
-        roundBorder: map['nextMessageInGroup'] == true,
-        showAvatar:
-            widget.showUserAvatars && map['nextMessageInGroup'] == false,
-        showName: map['showName'] == true,
-        showStatus: map['showStatus'] == true,
-        showUserAvatars: widget.showUserAvatars,
-        usePreviewData: widget.usePreviewData,
-        onPaymentClick: widget.onPaymentClick,
-      );
+            widget.onMessageTap?.call(tappedMessage);
+          },
+          onPreviewDataFetched: _onPreviewDataFetched,
+          roundBorder: map['nextMessageInGroup'] == true,
+          showAvatar: map['nextMessageInGroup'] == false,
+          showName: map['showName'] == true,
+          showStatus: map['showStatus'] == true,
+          showUserAvatars: widget.showUserAvatars,
+          textMessageBuilder: widget.textMessageBuilder,
+          usePreviewData: widget.usePreviewData,
+          onPaymentClick: widget.onPaymentClick);
     }
-  }
-
-  Widget _imageGalleryLoadingBuilder(
-    BuildContext context,
-    ImageChunkEvent? event,
-  ) {
-    return Center(
-      child: SizedBox(
-        width: 20.0,
-        height: 20.0,
-        child: CircularProgressIndicator(
-          value: event == null || event.expectedTotalBytes == null
-              ? 0
-              : event.cumulativeBytesLoaded / event.expectedTotalBytes!,
-        ),
-      ),
-    );
   }
 
   void _onCloseGalleryPressed() {
@@ -289,51 +419,50 @@ class _ChatState extends State<Chat> {
             children: [
               Container(
                 color: widget.theme.backgroundColor,
-                child: SafeArea(
-                  bottom: false,
-                  child: Column(
-                    children: [
-                      Flexible(
-                        child: widget.messages.isEmpty
-                            ? SizedBox.expand(
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  margin: const EdgeInsets.symmetric(
-                                    horizontal: 24,
-                                  ),
-                                  child: Text(
-                                    widget.l10n.emptyChatPlaceholder,
-                                    style: widget
-                                        .theme.emptyChatPlaceholderTextStyle,
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              )
-                            : GestureDetector(
-                                onTap: () => FocusManager.instance.primaryFocus
-                                    ?.unfocus(),
-                                child: ChatList(
+                child: Column(
+                  children: [
+                    Flexible(
+                      child: widget.messages.isEmpty
+                          ? SizedBox.expand(
+                              child: _emptyStateBuilder(),
+                            )
+                          : GestureDetector(
+                              onTap: () {
+                                FocusManager.instance.primaryFocus?.unfocus();
+                                widget.onBackgroundTap?.call();
+                              },
+                              child: LayoutBuilder(
+                                builder: (BuildContext context,
+                                        BoxConstraints constraints) =>
+                                    ChatList(
                                   isLastPage: widget.isLastPage,
                                   itemBuilder: (item, index) =>
-                                      _buildMessage(item),
+                                      _messageBuilder(item, constraints),
                                   items: _chatMessages,
                                   onEndReached: widget.onEndReached,
                                   onEndReachedThreshold:
                                       widget.onEndReachedThreshold,
+                                  scrollPhysics: widget.scrollPhysics,
                                 ),
                               ),
-                      ),
-                      Input(
-                        isAttachmentUploading: widget.isAttachmentUploading,
-                        onAttachmentPressed: widget.onAttachmentPressed,
-                        onPaymentRequestPressed: widget.onPaymentRequestPressed,
-                        onSendPressed: widget.onSendPressed,
-                      ),
-                    ],
-                  ),
+                            ),
+                    ),
+                    widget.customBottomWidget ??
+                        Input(
+                          isAttachmentUploading: widget.isAttachmentUploading,
+                          onAttachmentPressed: widget.onAttachmentPressed,
+                          onSendPressed: widget.onSendPressed,
+                          onTextChanged: widget.onTextChanged,
+                          onTextFieldTap: widget.onTextFieldTap,
+                          onPaymentRequestPressed:
+                              widget.onPaymentRequestPressed,
+                          sendButtonVisibilityMode:
+                              widget.sendButtonVisibilityMode,
+                        ),
+                  ],
                 ),
               ),
-              if (_isImageViewVisible) _buildImageGallery(),
+              if (_isImageViewVisible) _imageGalleryBuilder(),
             ],
           ),
         ),

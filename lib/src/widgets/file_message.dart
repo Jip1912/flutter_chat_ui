@@ -11,14 +11,10 @@ class FileMessage extends StatelessWidget {
   const FileMessage({
     Key? key,
     required this.message,
-    this.onPressed,
   }) : super(key: key);
 
   /// [types.FileMessage]
   final types.FileMessage message;
-
-  /// Called when user taps on a file
-  final void Function(types.FileMessage)? onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +26,12 @@ class FileMessage extends StatelessWidget {
     return Semantics(
       label: InheritedL10n.of(context).l10n.fileButtonAccessibilityLabel,
       child: Container(
-        padding: const EdgeInsets.fromLTRB(16, 16, 24, 16),
+        padding: EdgeInsets.fromLTRB(
+          InheritedChatTheme.of(context).theme.messageInsetsVertical,
+          InheritedChatTheme.of(context).theme.messageInsetsVertical,
+          InheritedChatTheme.of(context).theme.messageInsetsHorizontal,
+          InheritedChatTheme.of(context).theme.messageInsetsVertical,
+        ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -72,14 +73,16 @@ class FileMessage extends StatelessWidget {
                       margin: const EdgeInsets.only(
                         top: 4,
                       ),
-                      child: Text(formatBytes(message.size),
-                          style: _user.id == message.author.id
-                              ? InheritedChatTheme.of(context)
-                                  .theme
-                                  .sentMessageCaptionTextStyle
-                              : InheritedChatTheme.of(context)
-                                  .theme
-                                  .receivedMessageCaptionTextStyle),
+                      child: Text(
+                        formatBytes(message.size.truncate()),
+                        style: _user.id == message.author.id
+                            ? InheritedChatTheme.of(context)
+                                .theme
+                                .sentMessageCaptionTextStyle
+                            : InheritedChatTheme.of(context)
+                                .theme
+                                .receivedMessageCaptionTextStyle,
+                      ),
                     ),
                   ],
                 ),

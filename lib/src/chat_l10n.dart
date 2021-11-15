@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Base chat l10n containing all required variables to provide localized copy.
+/// Base chat l10n containing all required properties to provide localized copy.
 /// Extend this class if you want to create a custom l10n.
 @immutable
 abstract class ChatL10n {
@@ -33,7 +33,7 @@ abstract class ChatL10n {
 @immutable
 class ChatL10nEn extends ChatL10n {
   /// Creates English l10n. Use this constructor if you want to
-  /// override only a couple of variables, otherwise create a new class
+  /// override only a couple of properties, otherwise create a new class
   /// which extends [ChatL10n]
   const ChatL10nEn({
     String attachmentButtonAccessibilityLabel = 'Send media',
@@ -55,7 +55,7 @@ class ChatL10nEn extends ChatL10n {
 @immutable
 class ChatL10nEs extends ChatL10n {
   /// Creates Spanish l10n. Use this constructor if you want to
-  /// override only a couple of variables, otherwise create a new class
+  /// override only a couple of properties, otherwise create a new class
   /// which extends [ChatL10n]
   const ChatL10nEs({
     String attachmentButtonAccessibilityLabel = 'Enviar multimedia',
@@ -73,11 +73,33 @@ class ChatL10nEs extends ChatL10n {
         );
 }
 
+/// Korean l10n which extends [ChatL10n]
+@immutable
+class ChatL10nKo extends ChatL10n {
+  /// Creates Korean l10n. Use this constructor if you want to
+  /// override only a couple of properties, otherwise create a new class
+  /// which extends [ChatL10n]
+  const ChatL10nKo({
+    String attachmentButtonAccessibilityLabel = '미디어 보내기',
+    String emptyChatPlaceholder = '주고받은 메시지가 없습니다',
+    String fileButtonAccessibilityLabel = '파일',
+    String inputPlaceholder = '메시지',
+    String sendButtonAccessibilityLabel = '보내기',
+  }) : super(
+          attachmentButtonAccessibilityLabel:
+              attachmentButtonAccessibilityLabel,
+          emptyChatPlaceholder: emptyChatPlaceholder,
+          fileButtonAccessibilityLabel: fileButtonAccessibilityLabel,
+          inputPlaceholder: inputPlaceholder,
+          sendButtonAccessibilityLabel: sendButtonAccessibilityLabel,
+        );
+}
+
 /// Polish l10n which extends [ChatL10n]
 @immutable
 class ChatL10nPl extends ChatL10n {
   /// Creates Polish l10n. Use this constructor if you want to
-  /// override only a couple of variables, otherwise create a new class
+  /// override only a couple of properties, otherwise create a new class
   /// which extends [ChatL10n]
   const ChatL10nPl({
     String attachmentButtonAccessibilityLabel = 'Wyślij multimedia',
@@ -99,7 +121,7 @@ class ChatL10nPl extends ChatL10n {
 @immutable
 class ChatL10nPt extends ChatL10n {
   /// Creates Portuguese l10n. Use this constructor if you want to
-  /// override only a couple of variables, otherwise create a new class
+  /// override only a couple of properties, otherwise create a new class
   /// which extends [ChatL10n]
   const ChatL10nPt({
     String attachmentButtonAccessibilityLabel = 'Envia mídia',
@@ -121,7 +143,7 @@ class ChatL10nPt extends ChatL10n {
 @immutable
 class ChatL10nRu extends ChatL10n {
   /// Creates Russian l10n. Use this constructor if you want to
-  /// override only a couple of variables, otherwise create a new class
+  /// override only a couple of properties, otherwise create a new class
   /// which extends [ChatL10n]
   const ChatL10nRu({
     String attachmentButtonAccessibilityLabel = 'Отправить медиа',
@@ -139,11 +161,33 @@ class ChatL10nRu extends ChatL10n {
         );
 }
 
+/// Turkish l10n which extends [ChatL10n]
+@immutable
+class ChatL10nTr extends ChatL10n {
+  /// Creates Turkish l10n. Use this constructor if you want to
+  /// override only a couple of properties, otherwise create a new class
+  /// which extends [ChatL10n]
+  const ChatL10nTr({
+    String attachmentButtonAccessibilityLabel = 'Medya gönder',
+    String emptyChatPlaceholder = 'Henüz mesaj yok',
+    String fileButtonAccessibilityLabel = 'Dosya',
+    String inputPlaceholder = 'Mesaj yazın',
+    String sendButtonAccessibilityLabel = 'Gönder',
+  }) : super(
+          attachmentButtonAccessibilityLabel:
+              attachmentButtonAccessibilityLabel,
+          emptyChatPlaceholder: emptyChatPlaceholder,
+          fileButtonAccessibilityLabel: fileButtonAccessibilityLabel,
+          inputPlaceholder: inputPlaceholder,
+          sendButtonAccessibilityLabel: sendButtonAccessibilityLabel,
+        );
+}
+
 /// Ukrainian l10n which extends [ChatL10n]
 @immutable
 class ChatL10nUk extends ChatL10n {
   /// Creates Ukrainian l10n. Use this constructor if you want to
-  /// override only a couple of variables, otherwise create a new class
+  /// override only a couple of properties, otherwise create a new class
   /// which extends [ChatL10n]
   const ChatL10nUk({
     String attachmentButtonAccessibilityLabel = 'Надіслати медіа',
@@ -151,6 +195,28 @@ class ChatL10nUk extends ChatL10n {
     String fileButtonAccessibilityLabel = 'Файл',
     String inputPlaceholder = 'Повідомлення',
     String sendButtonAccessibilityLabel = 'Надіслати',
+  }) : super(
+          attachmentButtonAccessibilityLabel:
+              attachmentButtonAccessibilityLabel,
+          emptyChatPlaceholder: emptyChatPlaceholder,
+          fileButtonAccessibilityLabel: fileButtonAccessibilityLabel,
+          inputPlaceholder: inputPlaceholder,
+          sendButtonAccessibilityLabel: sendButtonAccessibilityLabel,
+        );
+}
+
+/// Simplified Chinese l10n which extends [ChatL10n]
+@immutable
+class ChatL10nZhCN extends ChatL10n {
+  /// Creates Simplified Chinese l10n. Use this constructor if you want to
+  /// override only a couple of properties, otherwise create a new class
+  /// which extends [ChatL10n]
+  const ChatL10nZhCN({
+    String attachmentButtonAccessibilityLabel = '发送媒体文件',
+    String emptyChatPlaceholder = '暂无消息',
+    String fileButtonAccessibilityLabel = '文件',
+    String inputPlaceholder = '输入消息',
+    String sendButtonAccessibilityLabel = '发送',
   }) : super(
           attachmentButtonAccessibilityLabel:
               attachmentButtonAccessibilityLabel,
