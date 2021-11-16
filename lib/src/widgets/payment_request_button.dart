@@ -21,11 +21,11 @@ class PaymentRequestButton extends StatelessWidget {
       margin: const EdgeInsets.only(right: 16),
       width: 24,
       child: IconButton(
-        icon: SvgPicture.asset(
-              'assets/save-money.svg',
-              color: Colors.white,
-              package: 'flutter_chat_ui',
-            ),
+        icon: Image.asset(
+          'assets/payment_request.png',
+          color: InheritedChatTheme.of(context).theme.inputTextColor,
+          package: 'flutter_chat_ui',
+        ),
         onPressed: onPressed,
         padding: EdgeInsets.zero,
         tooltip:
