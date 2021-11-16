@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
-import 'package:mollie/mollie.dart';
+
 //import 'package:flutter_link_previewer/flutter_link_previewer.dart'
 //    show LinkPreview, REGEX_LINK;
 import '../util.dart';
